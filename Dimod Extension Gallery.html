@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dimod Extensions Gallery</title>
+    <meta name="theme-color" content="#6b5ec7">
+    <meta name="description" content="The unofficial place to find powerful unsandboxed extensions for Dimod.">
+    <style>
+      :root {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color: #eee;
+          background: #111;
+        }
+        a { color: #56b2ff; }
+        a:visited { color: #f192ff; }
+        a:active { color: red; }
+      }
+
+      h1 { margin: 16px 0; }
+      h2, h3, p { margin: 8px 0; }
+
+      .section {
+        max-width: 928px;
+        margin: 24px auto;
+        padding: 0 16px;
+        box-sizing: border-box;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: normal;
+        text-align: center;
+      }
+      .header img.logo {
+        width: 56px;
+        height: 56px;
+        flex-shrink: 0;
+        margin: 0 8px 0 0;
+        object-fit: contain;
+      }
+      @media (max-width: 750px) {
+        .header h1 { flex-direction: column; }
+        .header img.logo { margin: 0 0 8px 0; }
+      }
+
+      /* Estilos dos Avisos (Estilo TurboWarp) */
+      .notice-box {
+        border-radius: 4px;
+        padding: 12px 16px;
+        margin: 12px 0;
+        text-align: left;
+        color: #ffffff;
+      }
+      .notice-box strong {
+        display: block;
+        font-size: 1.05em;
+        margin-bottom: 4px;
+        color: #ffffff;
+      }
+      .notice-red {
+        background-color: #3b0d0d;
+        border: 1px solid #8b0000;
+      }
+      .notice-purple {
+        background-color: #2a0d3b;
+        border: 1px solid #8a2be2;
+      }
+
+      .extensions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        margin: 16px -4px;
+      }
+      @media (max-width: 944px) { .extensions { grid-template-columns: 1fr 1fr; } }
+      @media (max-width: 650px) { .extensions { grid-template-columns: 1fr; } }
+
+      .extension {
+        position: relative;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        margin: 4px;
+        overflow: hidden;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+      }
+      @media (prefers-color-scheme: dark) { .extension { border-color: #333; } }
+      .extension h2 { font-size: 1.3em; }
+
+      .pinned-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 10;
+        background: #6b5ec7;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      }
+      .pinned-badge svg {
+        width: 18px;
+        height: 18px;
+        fill: #ffffff;
+      }
+
+      .extension-banner {
+        position: relative;
+        margin: -8px -8px 8px -8px;
+        width: calc(100% + 16px);
+        aspect-ratio: 2 / 1;
+        overflow: hidden;
+      }
+      .extension-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background-color: #222;
+      }
+
+      .extension-author {
+        font-size: 0.85em;
+        margin-top: auto;
+        padding-top: 8px;
+        border-top: 1px solid rgba(150, 150, 150, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .extension-buttons {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity .15s;
+        background: rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+        z-index: 5;
+      }
+      .extension:hover .extension-buttons, .extension:focus-within .extension-buttons {
+        opacity: 1;
+        backdrop-filter: blur(0.6px);
+      }
+      .extension-buttons > button {
+        background-color: #6b5ec7;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        font: inherit;
+        cursor: pointer;
+        color: white;
+        text-decoration: none;
+        pointer-events: auto;
+        transition: background-color 0.2s;
+      }
+      .extension-buttons > button:hover {
+        background-color: #5547a8;
+      }
+
+      .pagination-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin: 24px 0;
+        font-size: 1.1em;
+      }
+      .btn-page {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid #666;
+        background: transparent;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .btn-page:disabled { opacity: 0.3; cursor: not-allowed; }
+      .page-input-box {
+        border: 1px solid #888;
+        border-radius: 8px;
+        padding: 6px 16px;
+        min-width: 40px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      footer {
+        opacity: 0.8;
+        width: 100%;
+        text-align: center;
+        margin: 24px 0 16px 0;
+      }
+
+      .search-container {
+        display: flex;
+        justify-content: space-evenly;
+      }
+      .search-base {
+        display: flex;
+        padding: 8px;
+        font-size: 1rem;
+        background-color: transparent;
+        border-top: 2px solid #6b5ec7;
+        border-bottom: 2px solid #6b5ec7;
+      }
+      @media (prefers-color-scheme: dark) { .search-base { background-color: #111; } }
+      .search-bar {
+        border-left: 2px solid #6b5ec7;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        width: 75%;
+      }
+      .search-sort {
+        border-right: 2px solid #6b5ec7;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        width: 25%;
+      }
+    </style>
+</head>
+
+<body>
+    <div class="section header">
+      <h1>
+        <img class="logo" src="https://dimod.org/dimodExtended.png" alt="Dimod Logo">
+        <div>Dimod Extensions Gallery</div>
+      </h1>
+      <p>This is an unofficial gallery of Dimod extensions, where you can get extensions that are not limited by the extension sandbox. All extensions here are reviewed for safety.</p>
+      
+      <!-- Primeiro aviso (Vermelho) -->
+      <div class="notice-box notice-red">
+        <strong>Unsandboxed Extensions.</strong>
+        <span>Every extension on this site just works if you do it Unsandboxed.</span>
+      </div>
+
+      <!-- Segundo aviso (Roxo) -->
+      <div class="notice-box notice-purple">
+        <strong>Extensions Creators.</strong>
+        <span>Every extension that was not made by Draker has the owner's permission.</span>
+      </div>
+    </div>
+
+    <div class="section extensions-outer">
+      <div class="search-container">
+        <input type="text" id="search-bar" class="search-base search-bar" placeholder="Search extensions...">
+        <select class="search-base search-sort" id="search-sort">
+          <option value="original">Sort: Default</option>
+          <option value="abc">Sort: ABC</option>
+          <option value="zxy">Sort: ZXY</option>
+          <option value="newest">Sort: Newest to Oldest</option>
+          <option value="oldest">Sort: Oldest to Newest</option>
+        </select>
+      </div>
+      
+      <div class="extensions" id="extensions-container"></div>
+
+      <div class="pagination-container">
+        <button class="btn-page" id="btn-prev" disabled>&lt;</button>
+        <span>Page</span>
+        <div class="page-input-box" id="current-page-display">1</div>
+        <span>of <span id="total-pages-display">1</span></span>
+        <button class="btn-page" id="btn-next" disabled>&gt;</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>This site is not affiliated with anything official created by Draker.</p>
+    </footer>
+
+    <script id="main-script">
+      const defaultExtensions = [
+        {
+          "id": "ext_ks4",
+          "name": "KS4",
+          "desc": "KS4 is a really good animation editor with internal OOP paradigms when it comes to spriting.",
+          "imageSrc": "ks4.svg",
+          "link": "https://draker.8os.space/plugins/ks4.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 14
+        },
+        {
+          "id": "ext_funni_sync",
+          "name": "Funni Sync",
+          "desc": "Funni Sync is a high-precision, AudioContext-backed timing extension for advanced timer and stopwatch management.",
+          "imageSrc": "funni-sync.svg",
+          "link": "https://draker.8os.space/plugins/funnitimer.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 13
+        },
+        {
+          "id": "ext_bin",
+          "name": "Bin",
+          "desc": "Random extension that creates a Bin.",
+          "imageSrc": "bin.svg",
+          "link": "https://draker.8os.space/plugins/bin.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 12
+        },
+        {
+          "id": "ext_dials",
+          "name": "Dials and Stuff",
+          "desc": "Dials and Stuff is an extension that helps in a lot of stuff, including sliders and dragging.",
+          "imageSrc": "dials-n-stuff.svg",
+          "link": "https://draker.8os.space/plugins/dials.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 11
+        },
+        {
+          "id": "ext_classes",
+          "name": "Classes",
+          "desc": "This extensions add classes to your dimod project, create a class and work with it.",
+          "imageSrc": "data:image/svg+xml;utf8,%3Csvg%20viewBox%3D%220%200%20600%20300%22%20width%3D%22600%22%20height%3D%22300%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22bgGradient%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%232961b1%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231a3e71%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22circleGradient%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%220%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%232961b0%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231e4782%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22600%22%20height%3D%22300%22%20fill%3D%22url(%23bgGradient)%22%2F%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.15%22%3E%3Cpath%20d%3D%22M%20-20%2C20%20C%2030%2C10%2080%2C40%20100%2C20%20C%20130%2C-10%2080%2C-40%2020%2C-30%20Z%22%2F%3E%3Cpath%20d%3D%22M%20-10%2C80%20C%2040%2C60%20110%2C90%20140%2C60%20C%20170%2C30%20100%2C10%2050%2C30%20Z%22%2F%3E%3Cpath%20d%3D%22M%20-30%2C160%20C%2020%2C130%2090%2C170%20150%2C130%20C%20190%2C100%20130%2C80%2070%2C110%20Z%22%2F%3E%3Cpath%20d%3D%22M%20-10%2C230%20C%2050%2C200%20120%2C240%20160%2C210%20C%20200%2C180%20140%2C150%2080%2C180%20Z%22%2F%3E%3Cpath%20d%3D%22M%2050%2C270%20C%20110%2C240%20170%2C290%20220%2C260%20C%20250%2C240%20190%2C210%20130%2C240%20Z%22%2F%3E%3Cpath%20d%3D%22M%20120%2C310%20C%20180%2C280%20250%2C310%20300%2C280%20C%20330%2C260%20270%2C240%20200%2C270%20Z%22%2F%3E%3Cpath%20d%3D%22M%20450%2C-10%20C%20500%2C20%20560%2C-20%20610%2C10%20C%20630%2C20%20580%2C50%20520%2C20%20Z%22%2F%3E%3Cpath%20d%3D%22M%20420%2C60%20C%20480%2C30%20550%2C70%20610%2C30%20C%20640%2C10%20570%2C-10%20500%2C20%20Z%22%2F%3E%3Cpath%20d%3D%22M%20460%2C130%20C%20520%2C90%20580%2C140%20630%20100%20C%20650%2C80%20590%2C60%20520%2C90%20Z%22%2F%3E%3Cpath%20d%3D%22M%20430%2C210%20C%20490%2C170%20560%2C220%20620%2C180%20C%20650%2C160%20580%2C140%20510%2C170%20Z%22%2F%3E%3Cpath%20d%3D%22M%20380%2C280%20C%20440%2C240%20520%2C290%20580%2C250%20C%20620%2C220%20550%2C200%20470%2C230%20Z%22%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22150%22%20r%3D%22120%22%20fill%3D%22url(%23circleGradient)%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%2210%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22218%22%20fill%3D%22%23ffffff%22%20font-size%3D%22200%22%20font-family%3D%22Georgia%2C%20'Times%20New%20Roman'%2C%20serif%22%20text-anchor%3D%22middle%22%20font-weight%3D%22normal%22%3EC%3C%2Ftext%3E%3C%2Fsvg%3E",
+          "link": "https://draker.8os.space/plugins/classes.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 10
+        },
+        {
+          "id": "ext_positions",
+          "name": "Positions",
+          "desc": "An extension to store positional data in reporters. Pairs well with Targets by jwklong.",
+          "imageSrc": "position.svg",
+          "link": "https://draker.8os.space/plugins/positions.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 9
+        },
+        {
+          "id": "ext_mild_utilities",
+          "name": "Draker Mild Utilities",
+          "desc": "Custom utilities created by Draker that he used from some of his engines.",
+          "imageSrc": "draker-mild-utilities.svg",
+          "link": "https://draker.8os.space/plugins/mildutility.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 8
+        },
+        {
+          "id": "ext_incredimod",
+          "name": "Incredimod",
+          "desc": "Incredimod is a extension to create Incredibox mods, it was used on templates like Coolswag.",
+          "imageSrc": "incredimod.svg",
+          "link": "data:application/javascript,(function%20(Scratch)%20%7B...%7D)",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 7
+        },
+        {
+          "id": "ext_4theengine",
+          "name": "4TheEngine",
+          "desc": "4TheEngine is a extension to create Incredibox mods, it was used on templates like KS4 Template.",
+          "imageSrc": "4theengine.svg",
+          "link": "https://draker.8os.space/plugins/4theengine.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 6
+        },
+        {
+          "id": "ext_useful_junk",
+          "name": "Useful Junk",
+          "desc": "Some Useful Blocks to your projects.",
+          "imageSrc": "useful-junk.svg",
+          "link": "https://draker.8os.space/plugins/usefuljunk.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 5
+        },
+        {
+          "id": "ext_debugging",
+          "name": "Debug",
+          "desc": "Activate debug mode and use Log.",
+          "imageSrc": "debug.svg",
+          "link": "https://draker.8os.space/plugins/debugging.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 4
+        },
+        {
+          "id": "ext_bad_extension",
+          "name": "really really bad extension that will not benefit you",
+          "desc": "Don't",
+          "imageSrc": "really-really-bad-extension-that-will-not-benefit-you.svg",
+          "link": "https://draker.8os.space/plugins/badextension.js",
+          "author": "Draker",
+          "profile": "https://dimod.org/profile/draker",
+          "pinned": true,
+          "createdAt": 3
+        },
+        {
+          "id": "ext_hdu",
+          "name": "HDU",
+          "desc": "An extension that you can use to manage discord bots to your games.",
+          "imageSrc": "hdu.svg",
+          "link": "https://raw.githubusercontent.com/ZXDemon4/zxdemon4.github.io/refs/heads/main/zx-hdu.js",
+          "author": "ZX",
+          "profile": "https://dimod.org/profile/ZXDemon",
+          "pinned": false,
+          "createdAt": 2
+        },
+        {
+          "id": "ext_countdown_plus",
+          "name": "Countdown +",
+          "desc": "Use this to count time from a live event or a day on the year.",
+          "imageSrc": "countdown+.svg",
+          "link": "https://raw.githubusercontent.com/ZXDemon4/zxdemon4.github.io/refs/heads/main/zx-countdown%2B.js",
+          "author": "ZX",
+          "profile": "https://dimod.org/profile/ZXDemon",
+          "pinned": false,
+          "createdAt": 1
+        },
+        {
+          "id": "ext_audio_visualizer",
+          "name": "Audio Visualizer",
+          "desc": "Use this extension to show the audio of your game.",
+          "imageSrc": "audio-visual.svg",
+          "link": "https://raw.githubusercontent.com/GreenyBomb/extension/main/audio-visual.js",
+          "author": "DemoInfinite",
+          "profile": "https://dimod.org/profile/deathwishbydemo",
+          "pinned": false,
+          "createdAt": 0
+        },
+        {
+          "id": "ext_greeny_blocks",
+          "name": "Greeny Blocks",
+          "desc": "This Extension has the blocks that Greeny uses on his mods.",
+          "imageSrc": "greeny-blocks.svg",
+          "link": "https://raw.githubusercontent.com/GreenyBomb/extension/main/greeny-blocks.js",
+          "author": "Greeny Bomba",
+          "profile": "https://dimod.org/profile/GreenynDoGrau",
+          "pinned": false,
+          "createdAt": 0
+        }
+      ];
+
+      const pinIconSvg = `<div class="pinned-badge" title="Pinned Extension">
+        <svg viewBox="0 0 24 24">
+          <path d="M16,12V4H17V2H7V4H8V12L6,14V16H11V22H13V16H18V14L16,12Z"/>
+        </svg>
+      </div>`;
+
+      let extensionsList = defaultExtensions.map((ext, idx) => ({
+        ...ext,
+        originalIndex: idx
+      }));
+
+      function copyToClipboard(link, buttonElement) {
+        navigator.clipboard.writeText(link).then(() => {
+          const originalText = buttonElement.innerText;
+          buttonElement.innerText = 'Copied!';
+          setTimeout(() => {
+            buttonElement.innerText = originalText;
+          }, 1500);
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+      }
+
+      function renderExtensions() {
+        const container = document.getElementById('extensions-container');
+        const sortValue = document.getElementById('search-sort').value;
+        const searchQuery = document.getElementById('search-bar').value.toLowerCase().trim();
+
+        container.innerHTML = '';
+
+        let filtered = extensionsList.filter(ext => 
+          ext.name.toLowerCase().includes(searchQuery) ||
+          ext.desc.toLowerCase().includes(searchQuery) ||
+          ext.author.toLowerCase().includes(searchQuery)
+        );
+
+        filtered.sort((a, b) => {
+          if (a.pinned !== b.pinned) {
+            return a.pinned ? -1 : 1;
+          }
+
+          if (sortValue === 'abc') {
+            return a.name.localeCompare(b.name);
+          } else if (sortValue === 'zxy') {
+            return b.name.localeCompare(a.name);
+          } else if (sortValue === 'newest') {
+            return b.createdAt - a.createdAt;
+          } else if (sortValue === 'oldest') {
+            return a.createdAt - b.createdAt;
+          } else {
+            return a.originalIndex - b.originalIndex;
+          }
+        });
+
+        filtered.forEach(ext => {
+          const card = document.createElement('div');
+          card.className = 'extension';
+
+          card.innerHTML = `
+            ${ext.pinned ? pinIconSvg : ''}
+            <div class="extension-banner">
+              <img class="extension-image" src="${ext.imageSrc}" alt="${ext.name}">
+              <div class="extension-buttons">
+                <button type="button" onclick="copyToClipboard('${ext.link}', this)">Copy Link</button>
+              </div>
+            </div>
+            <h2>${ext.name}</h2>
+            <p>${ext.desc}</p>
+            <div class="extension-author">
+              <span>By <a href="${ext.profile}" target="_blank" rel="noopener noreferrer">${ext.author}</a></span>
+            </div>
+          `;
+
+          container.appendChild(card);
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('search-sort').addEventListener('change', renderExtensions);
+        document.getElementById('search-bar').addEventListener('input', renderExtensions);
+        renderExtensions();
+      });
+    </script>
+</body>
+</html>
